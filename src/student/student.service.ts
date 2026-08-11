@@ -4,6 +4,8 @@ import { Student } from './entity/student.entity';
 import { ILike, Repository } from 'typeorm';
 import { CreateStudentDto } from './dto/create-student-dto';
 import { UpdateStudentDto } from './dto/update-student-dto';
+import { DocumentUpload } from './entity/document-upload.entity';
+import { CreateDocumentDto } from './dto/create-document.dto';
 
 /**
 
@@ -22,6 +24,8 @@ export class StudentService {
   constructor(
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
+    @InjectRepository(DocumentUpload)
+    private readonly documentRepository: Repository<DocumentUpload>,
   ) {}
 
   async create(createStudentDto: CreateStudentDto): Promise<Student> {
@@ -48,16 +52,17 @@ export class StudentService {
     limit: number = 10,
   ) {
     const skip = (page - 1) * limit;
-    const whereCondition = search
-      ? [{ name: ILike(`%${search}%`) }, { email: ILike(`%${search}%`) }]
-      : {};
+    const queryBuilder = this.studentRepository.createQueryBuilder('student')
+      .leftJoinAndSelect('student.user', 'user')
+      .skip(skip)
+      .take(limit)
+      .orderBy('student.id', 'ASC');
 
-    const [data, total] = await this.studentRepository.findAndCount({
-      where: whereCondition,
-      skip,
-      take: limit,
-      order: { id: 'ASC' },
-    });
+    if (search) {
+      queryBuilder.where('student.name ILIKE :search OR user.email ILIKE :search', { search: `%${search}%` });
+    }
+
+    const [data, total] = await queryBuilder.getManyAndCount();
 
     return {
       data,
@@ -85,5 +90,31 @@ export class StudentService {
     }
 
     return await this.studentRepository.remove(student);
+  }
+
+  // --- DOCUMENT MANAGEMENT ---
+  async addDocument(studentId: number, createDocumentDto: CreateDocumentDto): Promise<DocumentUpload> {
+    const student = await this.findStudentById(studentId);
+    if (!student) {
+      throw new NotFoundException(`Student with id ${studentId} not found`);
+    }
+
+    const document = this.documentRepository.create({
+      ...createDocumentDto,
+      userId: student.userId, // Link document directly to the User ID mapped to this student
+    });
+    
+    return await this.documentRepository.save(document);
+  }
+
+  async getDocuments(studentId: number): Promise<DocumentUpload[]> {
+    const student = await this.findStudentById(studentId);
+    if (!student) {
+      throw new NotFoundException(`Student with id ${studentId} not found`);
+    }
+
+    return await this.documentRepository.find({
+      where: { userId: student.userId },
+    });
   }
 }

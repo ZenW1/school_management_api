@@ -14,6 +14,8 @@ import { Media } from './media/entity/media.entity';
 import { AuthModule } from './auth/auth.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { Student } from './student/entity/student.entity';
+import { DocumentUpload } from './student/entity/document-upload.entity';
 import { StudentModule } from './student/student.module';
 
 @Module({
@@ -38,7 +40,7 @@ import { StudentModule } from './student/student.module';
         username: configService.get<string>('POSTGRES_USER', 'myuser'),
         password: configService.get<string>('POSTGRES_PASSWORD', 'mypassword'),
         database: configService.get<string>('POSTGRES_DB', 'mydb'),
-        entities: [User, Media],
+        entities: [User, Media, Student, DocumentUpload],
         synchronize: true, // Use only in dev. In prod, use migrations.
       }),
       inject: [ConfigService],

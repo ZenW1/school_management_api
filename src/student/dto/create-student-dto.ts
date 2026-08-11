@@ -13,9 +13,9 @@ import { StudentStatus } from '../enum/student.status.enum';
 
 export class CreateStudentDto {
   @ApiProperty({ description: 'The user ID associated with the student' })
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  userId: string;
+  userId: number;
 
   @ApiProperty({ description: 'The name of the student' })
   @IsString()

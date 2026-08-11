@@ -95,6 +95,11 @@ src/
 
 ---
 
+## Documentation Workflow
+- Whenever a feature based on a `.md` specification (e.g., from `agents/`) is completed, I will automatically summarize the implemented feature and save it as a new Markdown file inside the `completed_features` folder.
+
+---
+
 ## Tech Stack
 - **NestJS** v10+
 - **TypeScript** v5+

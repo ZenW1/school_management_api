@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
+import { User } from '../../user/entity/user.entity';
 import { StudentStatus } from '../enum/student.status.enum';
 
 @Entity()
@@ -6,8 +7,12 @@ export class Student {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  userId: string;
+  @Column({ type: 'int' })
+  userId: number;
+
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'userId' })
+  user: User;
 
   @Column()
   name: string;

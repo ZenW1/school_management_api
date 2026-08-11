@@ -1,0 +1,6 @@
+export enum DocumentType {
+  ID = 'ID',
+  CERTIFICATE = 'CERTIFICATE',
+  QUALIFICATION = 'QUALIFICATION',
+  OTHER = 'OTHER',
+}
