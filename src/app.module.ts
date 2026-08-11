@@ -14,6 +14,7 @@ import { Media } from './media/entity/media.entity';
 import { AuthModule } from './auth/auth.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { StudentModule } from './student/student.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { APP_GUARD } from '@nestjs/core';
       ttl: 60000,
       limit: 10,
     }]),
+    StudentModule,
   ],
   controllers: [AppController],
   providers: [
