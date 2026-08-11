@@ -18,7 +18,7 @@ The Student Management module is the central hub for managing student data. It h
 | Method | Endpoint | Description | Access |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/students` | List and search all students | Admin, Manager |
-| `POST` | `/students` | Create student profile | Admin, Manager |
+| `POST` | `/students` | Create student profile (auto-creates User account via email/password) | Admin, Manager |
 | `GET` | `/students/:id` | Get student details | Admin, Manager, Student |
 | `PATCH` | `/students/:id` | Update student profile | Admin, Manager, Student |
 | `DELETE`| `/students/:id` | Deactivate student | Admin, Manager |

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Student } from './entity/student.entity';
 import { ILike, Repository } from 'typeorm';
@@ -6,6 +6,9 @@ import { CreateStudentDto } from './dto/create-student-dto';
 import { UpdateStudentDto } from './dto/update-student-dto';
 import { DocumentUpload } from './entity/document-upload.entity';
 import { CreateDocumentDto } from './dto/create-document.dto';
+import { UserService } from '../user/user.service';
+import { Role } from '../user/enums/role.enum';
+import * as bcrypt from 'bcrypt';
 
 /**
 
@@ -26,10 +29,33 @@ export class StudentService {
     private readonly studentRepository: Repository<Student>,
     @InjectRepository(DocumentUpload)
     private readonly documentRepository: Repository<DocumentUpload>,
-  ) {}
+    private readonly userService: UserService,
+  ) { }
 
   async create(createStudentDto: CreateStudentDto): Promise<Student> {
-    const student = this.studentRepository.create(createStudentDto);
+    // 1. Check if user already exists
+    const existingUser = await this.userService.findByEmail(createStudentDto.email);
+    if (existingUser) {
+      throw new ConflictException('User with this email already exists');
+    }
+
+    // 2. Hash password and create User record
+    const hashedPassword = await bcrypt.hash(createStudentDto.password, 10);
+    const user = await this.userService.create({
+      name: createStudentDto.name,
+      email: createStudentDto.email,
+      password: hashedPassword,
+      role: Role.STUDENT,
+    });
+
+    // 3. Create Student record linked to the new User
+    // We omit email and password since they aren't part of the Student entity
+    const { email, password, ...studentData } = createStudentDto;
+
+    const student = this.studentRepository.create({
+      ...studentData,
+      userId: user.id,
+    });
     return await this.studentRepository.save(student);
   }
 
@@ -103,7 +129,7 @@ export class StudentService {
       ...createDocumentDto,
       userId: student.userId, // Link document directly to the User ID mapped to this student
     });
-    
+
     return await this.documentRepository.save(document);
   }
 

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsEmail,
   IsString,
   IsNotEmpty,
   IsDateString,
@@ -12,10 +13,21 @@ import {
 import { StudentStatus } from '../enum/student.status.enum';
 
 export class CreateStudentDto {
-  @ApiProperty({ description: 'The user ID associated with the student' })
-  @IsNumber()
+  @ApiProperty({
+    example: 'john.doe@example.com',
+    description: 'Email for the student login',
+  })
+  @IsEmail()
   @IsNotEmpty()
-  userId: number;
+  email: string;
+
+  @ApiProperty({
+    example: 'securepassword123',
+    description: 'Password for the student login',
+  })
+  @IsString()
+  @IsNotEmpty()
+  password: string;
 
   @ApiProperty({ description: 'The name of the student' })
   @IsString()

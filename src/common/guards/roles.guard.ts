@@ -16,6 +16,12 @@ export class RolesGuard implements CanActivate {
       return true;
     }
     const { user } = context.switchToHttp().getRequest();
+    
+    // Role.USER is the default role that allows all authenticated users
+    if (requiredRoles.includes(Role.USER)) {
+      return true;
+    }
+
     return requiredRoles.some((role) => user?.role === role);
   }
 }

@@ -17,6 +17,10 @@ import { APP_GUARD } from '@nestjs/core';
 import { Student } from './student/entity/student.entity';
 import { DocumentUpload } from './student/entity/document-upload.entity';
 import { StudentModule } from './student/student.module';
+import { CourseModule } from './course/course.module';
+import { ClassModule } from './class/class.module';
+import { Course } from './course/entity/course.entity';
+import { Class } from './class/entity/class.entity';
 
 @Module({
   imports: [
@@ -40,7 +44,7 @@ import { StudentModule } from './student/student.module';
         username: configService.get<string>('POSTGRES_USER', 'myuser'),
         password: configService.get<string>('POSTGRES_PASSWORD', 'mypassword'),
         database: configService.get<string>('POSTGRES_DB', 'mydb'),
-        entities: [User, Media, Student, DocumentUpload],
+        entities: [User, Media, Student, DocumentUpload, Course, Class],
         synchronize: true, // Use only in dev. In prod, use migrations.
       }),
       inject: [ConfigService],
@@ -53,6 +57,8 @@ import { StudentModule } from './student/student.module';
       limit: 10,
     }]),
     StudentModule,
+    CourseModule,
+    ClassModule,
   ],
   controllers: [AppController],
   providers: [

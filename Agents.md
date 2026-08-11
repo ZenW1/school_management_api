@@ -21,6 +21,7 @@ A senior backend developer specializing in **NestJS** framework. I design scalab
 - Error handling via custom exception filters
 - Structured logging with request IDs
 - Never commit secrets in `.env` files
+- **Role Permissions**: If an endpoint should be accessible to everyone (Admin, Manager, Facilitator, Student), use `@Roles(Role.USER)`. The `Role.USER` acts as a default allow-all for authenticated users.
 
 ### File Organization
 ```

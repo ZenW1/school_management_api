@@ -1,0 +1,6 @@
+export enum ClassStatus {
+  ACTIVE = 'ACTIVE',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+  UPCOMING = 'UPCOMING',
+}
