@@ -57,15 +57,16 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
+  async findByName(name: string): Promise<User | null> {
+    return await this.userRepository.findOne({ where: { name } });
+  }
+
   async remove(id: number): Promise<void> {
     const user = await this.findOne(id);
     await this.userRepository.remove(user);
   }
 
-  async updateRefreshToken(
-    id: number,
-    refreshToken?: string,
-  ): Promise<void> {
+  async updateRefreshToken(id: number, refreshToken?: string): Promise<void> {
     await this.userRepository.update(id, { refreshToken });
   }
 }

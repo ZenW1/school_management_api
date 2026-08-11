@@ -51,6 +51,23 @@ export class AuthService {
     return this.generateTokens(user.id, user.role);
   }
 
+  async loginByName(loginDto: LoginDto) {
+    // it should be name
+    const user = await this.userService.findByName(loginDto.email);
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const isPasswordValid: boolean = await bcrypt.compare(
+      loginDto.password,
+      user.password,
+    );
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    return this.generateTokens(user.id, user.role);
+  }
+
   async refreshToken(refreshTokenDto: RefreshTokenDto) {
     try {
       // We need to verify the token without throwing if it's just expired
@@ -60,7 +77,15 @@ export class AuthService {
       });
 
       const user = await this.userService.findOne(payload.sub);
-      if (!user || user.refreshToken !== refreshTokenDto.refreshToken) {
+      if (!user || !user.refreshToken) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
+      const isRefreshTokenValid = await bcrypt.compare(
+        refreshTokenDto.refreshToken,
+        user.refreshToken,
+      );
+      if (!isRefreshTokenValid) {
         throw new UnauthorizedException('Invalid refresh token');
       }
 
@@ -83,7 +108,8 @@ export class AuthService {
       this.jwtService.signAsync(payload, { expiresIn: '7d' }), // Refresh token expires in 7 days
     ]);
 
-    await this.userService.updateRefreshToken(userId, refreshToken);
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    await this.userService.updateRefreshToken(userId, hashedRefreshToken);
 
     return {
       accessToken,

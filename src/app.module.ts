@@ -12,6 +12,8 @@ import { User } from './user/entity/user.entity';
 import { MediaModule } from './media/media.module';
 import { Media } from './media/entity/media.entity';
 import { AuthModule } from './auth/auth.module';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -43,9 +45,19 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     MediaModule,
     AuthModule,
+    ThrottlerModule.forRoot([{
+      ttl: 60000,
+      limit: 10,
+    }]),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 
 export class AppModule {}
