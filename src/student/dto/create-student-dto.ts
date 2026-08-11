@@ -39,32 +39,26 @@ export class CreateStudentDto {
   @IsNotEmpty()
   enrollmentDate: string;
 
-  @ApiProperty({ description: 'The name of the parent/guardian' })
+  @ApiProperty({ description: 'The name of the parent/guardian', required: false })
   @IsString()
-  @IsNotEmpty()
-  parentName: string;
+  @IsOptional()
+  parentName?: string;
 
-  @ApiProperty({ description: 'The phone number of the parent/guardian' })
+  @ApiProperty({ description: 'The phone number of the parent/guardian', required: false })
   @IsString()
-  @IsNotEmpty()
-  parentPhone: string;
+  @IsOptional()
+  parentPhone?: string;
 
-  @ApiProperty({ description: 'The address of the student' })
+  @ApiProperty({ description: 'The address of the student', required: false })
   @IsString()
-  @IsNotEmpty()
-  address: string;
+  @IsOptional()
+  address?: string;
 
-  @ApiProperty({ description: 'The date of birth of the student', example: '2010-05-15' })
+  @ApiProperty({ description: 'The date of birth of the student', example: '2010-05-15', required: false })
   @IsDateString()
-  @IsNotEmpty()
-  dateOfBirth: string;
+  @IsOptional()
+  dateOfBirth?: string;
 
-  @ApiProperty({ description: 'The GPA of the student', minimum: 0, maximum: 4.0 })
-  @IsNumber()
-  @Min(0)
-  @Max(4.0)
-  @IsNotEmpty()
-  gpa: number;
 
   @ApiProperty({ enum: StudentStatus, required: false, description: 'The status of the student' })
   @IsEnum(StudentStatus)

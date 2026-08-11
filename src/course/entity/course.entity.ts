@@ -1,7 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { CourseStatus } from '../enum/course-status.enum';
+import { User } from '../../user/entity/user.entity';
+import { Class } from '../../class/entity/class.entity';
+import { LearningMaterial } from '../../learning-material/entity/learning-material.entity';
 
-@Entity()
+@Entity('courses')
 export class Course {
   @PrimaryGeneratedColumn()
   id: number;
@@ -30,4 +33,20 @@ export class Course {
     default: CourseStatus.ACTIVE,
   })
   status: CourseStatus;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'createdBy' })
+  createdBy: User;
+
+  @OneToMany(() => Class, (cls) => cls.course)
+  classes: Class[];
+
+  @OneToMany(() => LearningMaterial, (lm) => lm.course)
+  materials: LearningMaterial[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

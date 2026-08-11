@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, Request } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
@@ -17,8 +17,8 @@ export class CourseController {
 
   @Post()
   @Roles(Role.ADMIN)
-  create(@Body() createCourseDto: CreateCourseDto) {
-    return this.courseService.create(createCourseDto);
+  create(@Body() createCourseDto: CreateCourseDto, @Request() req) {
+    return this.courseService.create(createCourseDto, req.user);
   }
 
   @Get()
@@ -43,5 +43,11 @@ export class CourseController {
   @Roles(Role.ADMIN)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.courseService.remove(id);
+  }
+
+  @Patch(':id/archive')
+  @Roles(Role.ADMIN)
+  archiveCourse(@Param('id', ParseIntPipe) id: number) {
+    return this.courseService.archiveCourse(id);
   }
 }

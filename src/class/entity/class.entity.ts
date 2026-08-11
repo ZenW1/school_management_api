@@ -1,8 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { ClassStatus } from '../enum/class-status.enum';
 import { Course } from '../../course/entity/course.entity';
+import { Facilitator } from '../../facilitator/entity/facilitator.entity';
+import { LearningMaterial } from '../../learning-material/entity/learning-material.entity';
 
-@Entity()
+@Entity('classes')
 export class Class {
   @PrimaryGeneratedColumn()
   id: number;
@@ -14,8 +16,12 @@ export class Class {
   @JoinColumn({ name: 'courseId' })
   course: Course;
 
-  @Column({ type: 'int', nullable: true })
-  facilitatorId: number; // Nullable until Facilitator entity is built
+  @Column({ nullable: true })
+  facilitatorId: number;
+
+  @ManyToOne(() => Facilitator, (facilitator) => facilitator.classes)
+  @JoinColumn({ name: 'facilitatorId' })
+  facilitator: Facilitator;
 
   @Column()
   className: string;
@@ -25,16 +31,19 @@ export class Class {
 
   // JSONB is postgres specific. In mysql it's just 'json'. We'll use 'jsonb'.
   @Column({ type: 'jsonb' })
-  schedule: Record<string, any>; 
+  schedule: Record<string, any>;
 
-  @Column()
+  @Column({ nullable: true })
   semester: string;
 
-  @Column()
+  @Column({ type: 'timestamp' })
   startDate: Date;
 
-  @Column()
+  @Column({ type: 'timestamp' })
   endDate: Date;
+
+  @Column({ type: 'int', default: 0 })
+  enrolledCount: number;
 
   @Column({
     type: 'enum',
@@ -42,4 +51,13 @@ export class Class {
     default: ClassStatus.UPCOMING,
   })
   status: ClassStatus;
+
+  @OneToMany(() => LearningMaterial, (lm) => lm.class)
+  materials: LearningMaterial[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

@@ -39,6 +39,12 @@ export class ClassController {
     return this.classService.update(id, updateClassDto);
   }
 
+  @Patch(':id/status')
+  @Roles(Role.ADMIN, Role.MANAGER)
+  updateStatus(@Param('id', ParseIntPipe) id: number, @Body('status') status: string) {
+    return this.classService.updateStatus(id, status);
+  }
+
   // --- MOCK ENDPOINTS FOR PHASE 2 ---
   @Get(':id/students')
   @Roles(Role.ADMIN, Role.MANAGER, Role.FACILITATOR)

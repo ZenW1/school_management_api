@@ -9,6 +9,7 @@ import { CreateDocumentDto } from './dto/create-document.dto';
 import { UserService } from '../user/user.service';
 import { Role } from '../user/enums/role.enum';
 import * as bcrypt from 'bcrypt';
+import { StudentStatus } from './enum/student.status.enum';
 
 /**
 
@@ -109,13 +110,27 @@ export class StudentService {
     return await this.studentRepository.save(student);
   }
 
+  async updateStatus(id: number, status: string) {
+    const student = await this.findStudentById(id);
+    if (!student) {
+      throw new NotFoundException(`Student with id ${id} not found`);
+    }
+
+    // Convert string to enum
+    const newStatus = status as any;
+    student.status = newStatus;
+    return await this.studentRepository.save(student);
+  }
+
   async deleteStudent(id: number) {
     const student = await this.findStudentById(id);
     if (!student) {
       throw new NotFoundException(`Student with id ${id} not found`);
     }
 
-    return await this.studentRepository.remove(student);
+    // Soft delete: mark as INACTIVE
+    student.status = StudentStatus.INACTIVE as any;
+    return await this.studentRepository.save(student);
   }
 
   // --- DOCUMENT MANAGEMENT ---

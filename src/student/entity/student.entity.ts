@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { StudentStatus } from '../enum/student.status.enum';
 
@@ -20,19 +20,19 @@ export class Student {
   @Column()
   enrollmentDate: Date;
 
-  @Column()
+  @Column({ nullable: true })
   parentName: string;
 
-  @Column()
+  @Column({ nullable: true })
   parentPhone: string;
 
-  @Column()
+  @Column({ nullable: true })
   address: string;
 
-  @Column()
+  @Column({ nullable: true })
   dateOfBirth: Date;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 3, scale: 2, default: 0 })
   gpa: number;
 
   @Column({
@@ -41,4 +41,10 @@ export class Student {
     default: StudentStatus.ACTIVE,
   })
   status: StudentStatus;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Class } from './entity/class.entity';
 import { CreateClassDto } from './dto/create-class.dto';
 import { UpdateClassDto } from './dto/update-class.dto';
+import { ClassStatus } from './enum/class-status.enum';
 
 @Injectable()
 export class ClassService {
@@ -41,5 +42,15 @@ export class ClassService {
   async remove(id: number): Promise<void> {
     const classEntity = await this.findOne(id);
     await this.classRepository.remove(classEntity);
+  }
+
+  async updateStatus(id: number, status: string): Promise<Class> {
+    const classEntity = await this.findOne(id);
+    // Simple check, or validation could be handled by a Pipe in controller
+    if (!Object.values(ClassStatus).includes(status as ClassStatus)) {
+      throw new Error(`Invalid status: ${status}`);
+    }
+    classEntity.status = status as ClassStatus;
+    return await this.classRepository.save(classEntity);
   }
 }

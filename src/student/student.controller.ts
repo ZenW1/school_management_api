@@ -65,6 +65,15 @@ export class StudentController {
     return await this.studentService.updateStudentInfo(id, updateStudentDto);
   }
 
+  @Patch(':id/status')
+  @Roles(Role.ADMIN, Role.MANAGER)
+  async updateStudentStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('status') status: string,
+  ) {
+    return await this.studentService.updateStatus(id, status);
+  }
+
   @Delete(':id')
   @Roles(Role.ADMIN, Role.MANAGER)
   async deleteStudent(@Param('id', ParseIntPipe) id: number) {

@@ -21,6 +21,11 @@ import { CourseModule } from './course/course.module';
 import { ClassModule } from './class/class.module';
 import { Course } from './course/entity/course.entity';
 import { Class } from './class/entity/class.entity';
+import { FacilitatorModule } from './facilitator/facilitator.module';
+import { Facilitator } from './facilitator/entity/facilitator.entity';
+import { LearningMaterialModule } from './learning-material/learning-material.module';
+import { LearningMaterial } from './learning-material/entity/learning-material.entity';
+import { AssessmentModule } from './assessment/assessment.module';
 
 @Module({
   imports: [
@@ -44,7 +49,7 @@ import { Class } from './class/entity/class.entity';
         username: configService.get<string>('POSTGRES_USER', 'myuser'),
         password: configService.get<string>('POSTGRES_PASSWORD', 'mypassword'),
         database: configService.get<string>('POSTGRES_DB', 'mydb'),
-        entities: [User, Media, Student, DocumentUpload, Course, Class],
+        entities: [User, Media, Student, DocumentUpload, Course, Class, Facilitator, LearningMaterial],
         synchronize: true, // Use only in dev. In prod, use migrations.
       }),
       inject: [ConfigService],
@@ -59,6 +64,9 @@ import { Class } from './class/entity/class.entity';
     StudentModule,
     CourseModule,
     ClassModule,
+    FacilitatorModule,
+    LearningMaterialModule,
+    AssessmentModule,
   ],
   controllers: [AppController],
   providers: [
@@ -70,7 +78,7 @@ import { Class } from './class/entity/class.entity';
   ],
 })
 
-export class AppModule {}
+export class AppModule { }
 // export class AppModule implements NestModule {
 //   configure(consumer: MiddlewareConsumer) {
 //     consumer.apply(ApiKeyMiddleware).forRoutes(UserController);
