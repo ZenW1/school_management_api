@@ -26,6 +26,9 @@ import { Facilitator } from './facilitator/entity/facilitator.entity';
 import { LearningMaterialModule } from './learning-material/learning-material.module';
 import { LearningMaterial } from './learning-material/entity/learning-material.entity';
 import { AssessmentModule } from './assessment/assessment.module';
+import { Assignment } from './assessment/entities/assignment.entity';
+import { Submission } from './assessment/entities/submission.entity';
+import { Grade } from './assessment/entities/grade.entity';
 
 @Module({
   imports: [
@@ -49,7 +52,7 @@ import { AssessmentModule } from './assessment/assessment.module';
         username: configService.get<string>('POSTGRES_USER', 'myuser'),
         password: configService.get<string>('POSTGRES_PASSWORD', 'mypassword'),
         database: configService.get<string>('POSTGRES_DB', 'mydb'),
-        entities: [User, Media, Student, DocumentUpload, Course, Class, Facilitator, LearningMaterial],
+        entities: [User, Media, Student, DocumentUpload, Course, Class, Facilitator, LearningMaterial, Assignment, Submission, Grade],
         synchronize: true, // Use only in dev. In prod, use migrations.
       }),
       inject: [ConfigService],
