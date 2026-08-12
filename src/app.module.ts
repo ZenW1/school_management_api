@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -6,8 +6,6 @@ import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
-import { UserController } from './user/user.controller';
-import { ApiKeyMiddleware } from './middleware/api-key/api-key.middleware';
 import { User } from './user/entity/user.entity';
 import { MediaModule } from './media/media.module';
 import { Media } from './media/entity/media.entity';
@@ -29,6 +27,11 @@ import { AssessmentModule } from './assessment/assessment.module';
 import { Assignment } from './assessment/entities/assignment.entity';
 import { Submission } from './assessment/entities/submission.entity';
 import { Grade } from './assessment/entities/grade.entity';
+import { Attendance } from './attendance/entity/attendance.entity';
+import { Fee } from './fee/entity/fee.entity';
+import { AttendanceModule } from './attendance/attendance.module';
+import { FeeModule } from './fee/fee.module';
+import { ReportModule } from './report/report.module';
 
 @Module({
   imports: [
@@ -52,7 +55,21 @@ import { Grade } from './assessment/entities/grade.entity';
         username: configService.get<string>('POSTGRES_USER', 'myuser'),
         password: configService.get<string>('POSTGRES_PASSWORD', 'mypassword'),
         database: configService.get<string>('POSTGRES_DB', 'mydb'),
-        entities: [User, Media, Student, DocumentUpload, Course, Class, Facilitator, LearningMaterial, Assignment, Submission, Grade],
+        entities: [
+          User,
+          Media,
+          Student,
+          DocumentUpload,
+          Course,
+          Class,
+          Facilitator,
+          LearningMaterial,
+          Assignment,
+          Submission,
+          Grade,
+          Attendance,
+          Fee,
+        ],
         synchronize: true, // Use only in dev. In prod, use migrations.
       }),
       inject: [ConfigService],
@@ -60,16 +77,21 @@ import { Grade } from './assessment/entities/grade.entity';
     UserModule,
     MediaModule,
     AuthModule,
-    ThrottlerModule.forRoot([{
-      ttl: 60000,
-      limit: 10,
-    }]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 10,
+      },
+    ]),
     StudentModule,
     CourseModule,
     ClassModule,
     FacilitatorModule,
     LearningMaterialModule,
     AssessmentModule,
+    AttendanceModule,
+    FeeModule,
+    ReportModule,
   ],
   controllers: [AppController],
   providers: [
@@ -80,8 +102,7 @@ import { Grade } from './assessment/entities/grade.entity';
     },
   ],
 })
-
-export class AppModule { }
+export class AppModule {}
 // export class AppModule implements NestModule {
 //   configure(consumer: MiddlewareConsumer) {
 //     consumer.apply(ApiKeyMiddleware).forRoutes(UserController);

@@ -15,7 +15,7 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async register(registerDto: RegisterDto) {
     const existingUser = await this.userService.findByEmail(registerDto.email);
@@ -48,7 +48,13 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    return this.generateTokens(user.id, user.role);
+    const tokens = await this.generateTokens(user.id, user.role);
+    const { password, refreshToken, ...userInfo } = user;
+
+    return {
+      ...tokens,
+      user: userInfo,
+    };
   }
 
   async loginByName(loginDto: LoginDto) {

@@ -7,11 +7,14 @@ import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   // Security Middlewares
   app.use(helmet());
   app.enableCors();
-  
+
+  // Global API prefix — all routes become /api/*
+  app.setGlobalPrefix('api');
+
   // Global Pipes & Interceptors
   app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
@@ -19,13 +22,18 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Nest Review API')
-    .setDescription('The API description')
+    .setDescription(
+      'The API description. [<a href="/api/swagger.json" target="_blank">swagger.json</a>]',
+    )
     .setVersion('1.0')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  // Swagger UI at /docs (avoids conflict with the /api global prefix)
+  SwaggerModule.setup('docs', app, document, {
+    jsonDocumentUrl: 'docs/swagger.json',
+  });
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 8080);
 }
 bootstrap();
